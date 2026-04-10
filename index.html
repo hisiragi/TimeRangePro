@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#1a73e8" media="(prefers-color-scheme: dark)">
-  <meta name="theme-color" content="#1a73e8" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#1a73e8">
   <meta name="description" content="開始・終了時刻を指定できる高機能ストップウォッチ">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -12,7 +11,7 @@
   <link rel="manifest" href="/manifest.json">
   <link rel="stylesheet" href="/style.css">
   <title>TimeRangePro</title>
-  <script async="" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3265952621594063" crossorigin="anonymous"></script>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3265952621594063" crossorigin="anonymous"></script>
 </head>
 <body>
 
@@ -29,26 +28,13 @@
       <span class="app-title">TimeRange<span>Pro</span></span>
     </div>
     <div class="header-actions">
-      <button class="icon-btn" id="btnTheme" aria-label="テーマ切替" title="ダーク/ライト切替">
-        </button>
+      <button class="icon-btn" id="btnTheme" aria-label="テーマ切替" title="ダーク/ライト切替"></button>
     </div>
   </header>
-
-  <div class="install-prompt" id="installPrompt" style="display:none;">
-    <div class="install-text">
-      <strong>アプリとしてインストール</strong>
-      ホーム画面に追加してオフラインでも使えます
-    </div>
-    <button class="btn btn-secondary btn-install" style="padding:0 14px;height:36px;font-size:0.82rem;">インストール</button>
-    <button class="icon-btn btn-install-dismiss" aria-label="閉じる">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
-    </button>
-  </div>
 
   <main class="main-content">
 
     <section class="panel" aria-label="タイマー">
-
       <div class="panel-display">
         <div class="timer-status" id="timerStatus">READY</div>
         <div class="timer-display" aria-live="off">
@@ -62,6 +48,77 @@
           <div class="progress-labels">
             <span id="progressStart">00:00:00</span>
             <span id="progressEnd">--:--:--</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-settings">
+        <div class="panel-settings-label">時刻範囲</div>
+        <div class="range-inputs" aria-label="時刻範囲設定">
+          <div class="input-group">
+            <label class="input-label" for="inputStart"><span class="dot dot-start"></span>開始時刻</label>
+            <input type="text" class="time-input" id="inputStart" placeholder="00:00:00.00" inputmode="decimal" autocomplete="off">
+          </div>
+          <div class="input-group">
+            <label class="input-label" for="inputStop"><span class="dot dot-stop"></span>終了時刻</label>
+            <input type="text" class="time-input" id="inputStop" placeholder="00:00:00.00" inputmode="decimal" autocomplete="off">
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-controls">
+        <div class="controls" role="group">
+          <button class="btn btn-primary" id="btnStartStop">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            Start
+          </button>
+          <button class="btn btn-ghost" id="btnLap" disabled>ラップ</button>
+          <button class="btn btn-secondary" id="btnReset" disabled>リセット</button>
+        </div>
+        <p class="shortcut-hint">
+          スペース: スタート/一時停止 &nbsp;|&nbsp; L: ラップ &nbsp;|&nbsp; Shift+R: リセット
+        </p>
+      </div>
+    </section>
+
+    <section class="panel panel-lap">
+      <div class="panel-lap-header">
+        <div class="panel-settings-label">ラップ記録</div>
+        <span class="lap-count" id="lapCount">0</span>
+      </div>
+      <div class="lap-list-inset">
+        <div class="lap-list" id="lapList">
+          <div class="lap-empty">ラップはまだありません</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="noads-banner">
+      <div class="noads-text">
+        <strong>広告なしで使いたい？</strong>
+        NOAds バージョンでは広告ゼロで快適に利用できます
+      </div>
+      <button class="btn-noads" id="btnGoNoads">広告なし版を開く</button>
+    </div>
+
+  </main>
+
+  <footer class="app-footer">
+    TimeRangePro &nbsp;·&nbsp; スペース: スタート &nbsp;·&nbsp; L: ラップ
+  </footer>
+
+</div>
+
+<script>
+  if ('serviceWorker' in navigator) { navigator.serviceWorker.register('/sw.js').catch(() => {}); }
+  document.getElementById('btnGoNoads').addEventListener('click', function () {
+    sessionStorage.setItem('trp_noads_token', '1');
+    window.location.href = '/noads/';
+  });
+</script>
+<script src="/app.js"></script>
+</body>
+</html>
           </div>
         </div>
       </div>
