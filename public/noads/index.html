@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#1a73e8">
+  <meta name="description" content="TimeRangePro — 広告なしバージョン">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="TimeRangePro">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="stylesheet" href="/style.css">
+  <title>TimeRangePro — noads</title>
+
+  <style>
+    /* ─── noads badge ─── */
+    .noads-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: #fff;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      padding: 2px 8px;
+      border-radius: 20px;
+      text-transform: uppercase;
+    }
+
+    /* ─── Back button ─── */
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      padding: 6px 10px;
+      border-radius: var(--radius-sm);
+      transition: all var(--transition);
+      -webkit-tap-highlight-color: transparent;
+    }
+    .back-link:hover { color: var(--text-primary); background: var(--bg-elevated); }
+
+    /* ─── Gate overlay (shown briefly while checking token) ─── */
+    #gate {
+      position: fixed;
+      inset: 0;
+      background: var(--bg-base);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 12px;
+      transition: opacity 0.3s;
+    }
+    #gate.hide {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .gate-spinner {
+      width: 32px;
+      height: 32px;
+      border: 3px solid var(--border);
+      border-top-color: var(--md-primary);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .gate-text { font-size: 0.82rem; color: var(--text-muted); }
+  </style>
+</head>
+<body>
+
+<!-- ── Gate overlay (removed after token check) ── -->
+<div id="gate">
+  <div class="gate-spinner"></div>
+  <span class="gate-text">認証中...</span>
+</div>
+
+<div class="app-container" id="appContent" style="visibility:hidden;">
+
+  <!-- ── Header ── -->
+  <header class="app-header">
+    <div class="app-logo">
+      <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="14" cy="15" r="10" stroke="var(--md-primary)" stroke-width="2"/>
+        <line x1="14" y1="15" x2="14" y2="7" stroke="var(--md-primary)" stroke-width="2" stroke-linecap="round"/>
+        <line x1="14" y1="15" x2="19" y2="17" stroke="var(--md-secondary)" stroke-width="1.5" stroke-linecap="round"/>
+        <rect x="10" y="3" width="8" height="3" rx="1.5" fill="var(--md-primary)"/>
+      </svg>
+      <span class="app-title">TimeRange<span>Pro</span></span>
+      <span class="noads-badge">
+        <svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+        noads
+      </span>
+    </div>
+    <div class="header-actions">
+      <a href="/" class="back-link" title="通常版に戻る" aria-label="通常版に戻る">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+        戻る
+      </a>
+      <button class="icon-btn" id="btnTheme" aria-label="テーマ切替" title="ダーク/ライト切替">
+      </button>
+    </div>
+  </header>
+
+  <!-- ── Install Prompt ── -->
+  <div class="install-prompt" id="installPrompt" style="display:none;">
+    <div class="install-text">
+      <strong>アプリとしてインストール</strong>
+      ホーム画面に追加してオフラインでも使えます
+    </div>
+    <button class="btn btn-secondary btn-install" style="padding:0 14px;height:36px;font-size:0.82rem;">インストール</button>
+    <button class="icon-btn btn-install-dismiss" aria-label="閉じる">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+    </button>
+  </div>
+
+  <!-- ── Main ── -->
+  <main class="main-content">
+
+    <!-- ╔═ Timer Panel ══════════════════════════════════╗ -->
+    <section class="panel" aria-label="タイマー">
+
+      <!-- ┌─ Display area ───────────────────────────┐ -->
+      <div class="panel-display">
+        <div class="timer-status" id="timerStatus">READY</div>
+        <div class="timer-display" id="timerDisplay" aria-live="off">
+          00:00:00<span class="timer-ms" id="timerMs">.00</span>
+        </div>
+        <div class="panel-progress">
+          <div class="progress-container" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <div class="progress-bar" id="progressBar"></div>
+          </div>
+          <div class="progress-labels">
+            <span id="progressStart">00:00:00</span>
+            <span id="progressEnd">--:--:--</span>
+          </div>
+        </div>
+      </div>
+      <!-- └──────────────────────────────────────────┘ -->
+
+      <!-- ┌─ Range settings ──────────────────────────┐ -->
+      <div class="panel-settings">
+        <div class="panel-settings-label">時刻範囲</div>
+        <div class="range-inputs" aria-label="時刻範囲設定">
+          <div class="input-group">
+            <label class="input-label" for="inputStart">
+              <span class="dot dot-start"></span>
+              開始時刻
+            </label>
+            <input
+              type="text"
+              class="time-input"
+              id="inputStart"
+              placeholder="00:00:00.00"
+              inputmode="decimal"
+              autocomplete="off"
+              spellcheck="false"
+              aria-label="タイマー開始時刻"
+            >
+            <span class="input-hint">例: 01:23:45 / 1:23:45.50</span>
+          </div>
+          <div class="input-group">
+            <label class="input-label" for="inputStop">
+              <span class="dot dot-stop"></span>
+              終了時刻
+            </label>
+            <input
+              type="text"
+              class="time-input"
+              id="inputStop"
+              placeholder="00:00:00.00"
+              inputmode="decimal"
+              autocomplete="off"
+              spellcheck="false"
+              aria-label="タイマー終了時刻（自動停止）"
+            >
+            <span class="input-hint">設定すると自動停止</span>
+          </div>
+        </div>
+      </div>
+      <!-- └──────────────────────────────────────────┘ -->
+
+      <!-- ┌─ Controls ────────────────────────────────┐ -->
+      <div class="panel-controls">
+        <div class="controls" role="group" aria-label="タイマー操作">
+          <button class="btn btn-primary" id="btnStartStop" aria-label="スタート">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            Start
+          </button>
+          <button class="btn btn-ghost" id="btnLap" disabled aria-label="ラップ">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg>
+            ラップ
+          </button>
+          <button class="btn btn-secondary" id="btnReset" disabled aria-label="リセット">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></svg>
+            リセット
+          </button>
+        </div>
+        <p class="shortcut-hint">
+          スペース: スタート/一時停止 &nbsp;|&nbsp; L: ラップ &nbsp;|&nbsp; Shift+R: リセット
+        </p>
+      </div>
+      <!-- └──────────────────────────────────────────┘ -->
+
+    </section>
+    <!-- ╚═══════════════════════════════════════════════╝ -->
+
+    <!-- ╔═ Lap Panel ════════════════════════════════════╗ -->
+    <section class="panel panel-lap" aria-label="ラップ記録">
+      <div class="panel-lap-header">
+        <div class="panel-settings-label">ラップ記録</div>
+        <span class="lap-count" id="lapCount">0</span>
+      </div>
+      <!-- ┌─ Lap list (inset) ────────────────────────┐ -->
+      <div class="lap-list-inset">
+        <div class="lap-list" id="lapList" role="list">
+          <div class="lap-empty">ラップはまだありません</div>
+        </div>
+      </div>
+      <!-- └──────────────────────────────────────────┘ -->
+    </section>
+    <!-- ╚═══════════════════════════════════════════════╝ -->
+
+  </main>
+
+  <footer class="app-footer">
+    TimeRangePro noads &nbsp;·&nbsp; 広告なし快適モード
+  </footer>
+
+</div>
+
+<script>
+  // ── Service Worker ────────────────────────────────────
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+  }
+
+  // ── One-time token gate ───────────────────────────────
+  // Must run BEFORE app.js so gate is enforced immediately
+  (function () {
+    const TOKEN_KEY = 'trp_noads_token';
+    const gate      = document.getElementById('gate');
+    const appContent = document.getElementById('appContent');
+
+    function showGateError() {
+      gate.innerHTML = `
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="var(--md-error)">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+        </svg>
+        <span style="font-size:0.88rem;color:var(--text-secondary);text-align:center;padding:0 24px;">
+          直接アクセスは許可されていません。<br>トップページのボタンからお入りください。
+        </span>
+        <a href="/" style="
+          margin-top:8px;
+          background:var(--md-primary);
+          color:#fff;
+          padding:10px 24px;
+          border-radius:50px;
+          text-decoration:none;
+          font-size:0.88rem;
+          font-weight:600;
+          font-family:'DM Sans',sans-serif;
+        ">トップページへ戻る</a>
+      `;
+      gate.style.gap = '16px';
+    }
+
+    function checkToken() {
+      const token = sessionStorage.getItem(TOKEN_KEY);
+
+      if (!token) {
+        // No token: show error in gate, do NOT show app
+        showGateError();
+        return;
+      }
+
+      // Token found: consume it immediately (one-time use)
+      sessionStorage.removeItem(TOKEN_KEY);
+
+      // Show app, hide gate
+      appContent.style.visibility = 'visible';
+      gate.classList.add('hide');
+      setTimeout(() => { gate.style.display = 'none'; }, 350);
+    }
+
+    // Small delay so CSS vars are applied before showing error UI
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', checkToken);
+    } else {
+      checkToken();
+    }
+  })();
+</script>
+<script src="/app.js"></script>
+</body>
+</html>
