@@ -3,84 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#1a73e8">
-  <meta name="description" content="TimeRangePro — 広告なしバージョン">
+  <meta name="theme-color" content="#1a73e8" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#1a73e8" media="(prefers-color-scheme: light)">
+  <meta name="description" content="開始・終了時刻を指定できる高機能ストップウォッチ">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="TimeRangePro">
-  <link rel="manifest" href="/public/manifest.json">
-  <link rel="stylesheet" href="/public/style.css">
-  <title>TimeRangePro — noads</title>
-
-  <style>
-    /* ─── noads badge ─── */
-    .noads-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      background: linear-gradient(135deg, #22c55e, #16a34a);
-      color: #fff;
-      font-size: 0.65rem;
-      font-weight: 700;
-      letter-spacing: 1px;
-      padding: 2px 8px;
-      border-radius: 20px;
-      text-transform: uppercase;
-    }
-
-    /* ─── Back button ─── */
-    .back-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      text-decoration: none;
-      padding: 6px 10px;
-      border-radius: var(--radius-sm);
-      transition: all var(--transition);
-      -webkit-tap-highlight-color: transparent;
-    }
-    .back-link:hover { color: var(--text-primary); background: var(--bg-elevated); }
-
-    /* ─── Gate overlay (shown briefly while checking token) ─── */
-    #gate {
-      position: fixed;
-      inset: 0;
-      background: var(--bg-base);
-      z-index: 9999;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      gap: 12px;
-      transition: opacity 0.3s;
-    }
-    #gate.hide {
-      opacity: 0;
-      pointer-events: none;
-    }
-    .gate-spinner {
-      width: 32px;
-      height: 32px;
-      border: 3px solid var(--border);
-      border-top-color: var(--md-primary);
-      border-radius: 50%;
-      animation: spin 0.7s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .gate-text { font-size: 0.82rem; color: var(--text-muted); }
-  </style>
+  <link rel="manifest" href="/manifest.json">
+  <link rel="stylesheet" href="/style.css">
+  <title>TimeRangePro</title>
+  <!-- Google AdSense -->
+  <script async="" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3265952621594063" crossorigin="anonymous"></script>
 </head>
 <body>
 
-<!-- ── Gate overlay (removed after token check) ── -->
-<div id="gate">
-  <div class="gate-spinner"></div>
-  <span class="gate-text">認証中...</span>
-</div>
-
-<div class="app-container" id="appContent" style="visibility:hidden;">
+<div class="app-container">
 
   <!-- ── Header ── -->
   <header class="app-header">
@@ -92,17 +29,10 @@
         <rect x="10" y="3" width="8" height="3" rx="1.5" fill="var(--md-primary)"/>
       </svg>
       <span class="app-title">TimeRange<span>Pro</span></span>
-      <span class="noads-badge">
-        <svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-        noads
-      </span>
     </div>
     <div class="header-actions">
-      <a href="/" class="back-link" title="通常版に戻る" aria-label="通常版に戻る">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
-        戻る
-      </a>
       <button class="icon-btn" id="btnTheme" aria-label="テーマ切替" title="ダーク/ライト切替">
+        <!-- filled by app.js -->
       </button>
     </div>
   </header>
@@ -122,7 +52,7 @@
   <!-- ── Main ── -->
   <main class="main-content">
 
-    <!-- ╔═ Timer Panel ══════════════════════════════════╗ -->
+    <!-- ╔═ Timer Panel (outer card) ════════════════════╗ -->
     <section class="panel" aria-label="タイマー">
 
       <!-- ┌─ Display area ───────────────────────────┐ -->
@@ -131,6 +61,8 @@
         <div class="timer-display" id="timerDisplay" aria-live="off">
           00:00:00<span class="timer-ms" id="timerMs">.00</span>
         </div>
+
+        <!-- Progress bar nested inside display -->
         <div class="panel-progress">
           <div class="progress-container" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
             <div class="progress-bar" id="progressBar"></div>
@@ -143,7 +75,7 @@
       </div>
       <!-- └──────────────────────────────────────────┘ -->
 
-      <!-- ┌─ Range settings ──────────────────────────┐ -->
+      <!-- ┌─ Range settings (nested sub-panel) ──────┐ -->
       <div class="panel-settings">
         <div class="panel-settings-label">時刻範囲</div>
         <div class="range-inputs" aria-label="時刻範囲設定">
@@ -226,76 +158,39 @@
     </section>
     <!-- ╚═══════════════════════════════════════════════╝ -->
 
+    <!-- Noads Banner -->
+    <div class="noads-banner">
+      <div class="noads-text">
+        <strong>広告なしで使いたい？</strong>
+        NOAds バージョンでは広告ゼロで快適に利用できます
+      </div>
+      <button class="btn-noads" id="btnGoNoads" aria-label="広告なしバージョンを開く">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7z"/></svg>
+        広告なし版を開く
+      </button>
+    </div>
+
   </main>
 
   <footer class="app-footer">
-    TimeRangePro noads &nbsp;·&nbsp; 広告なし快適モード
+    TimeRangePro &nbsp;·&nbsp; スペース: スタート &nbsp;·&nbsp; L: ラップ
   </footer>
 
 </div>
 
 <script>
-  // ── Service Worker ────────────────────────────────────
+  // ── Service Worker Registration ──────────────────────
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/sw.js').catch(() => {});
   }
 
-  // ── One-time token gate ───────────────────────────────
-  // Must run BEFORE app.js so gate is enforced immediately
-  (function () {
-    const TOKEN_KEY = 'trp_noads_token';
-    const gate      = document.getElementById('gate');
-    const appContent = document.getElementById('appContent');
-
-    function showGateError() {
-      gate.innerHTML = `
-        <svg width="40" height="40" viewBox="0 0 24 24" fill="var(--md-error)">
-          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
-        </svg>
-        <span style="font-size:0.88rem;color:var(--text-secondary);text-align:center;padding:0 24px;">
-          直接アクセスは許可されていません。<br>トップページのボタンからお入りください。
-        </span>
-        <a href="/" style="
-          margin-top:8px;
-          background:var(--md-primary);
-          color:#fff;
-          padding:10px 24px;
-          border-radius:50px;
-          text-decoration:none;
-          font-size:0.88rem;
-          font-weight:600;
-          font-family:'DM Sans',sans-serif;
-        ">トップページへ戻る</a>
-      `;
-      gate.style.gap = '16px';
-    }
-
-    function checkToken() {
-      const token = sessionStorage.getItem(TOKEN_KEY);
-
-      if (!token) {
-        // No token: show error in gate, do NOT show app
-        showGateError();
-        return;
-      }
-
-      // Token found: consume it immediately (one-time use)
-      sessionStorage.removeItem(TOKEN_KEY);
-
-      // Show app, hide gate
-      appContent.style.visibility = 'visible';
-      gate.classList.add('hide');
-      setTimeout(() => { gate.style.display = 'none'; }, 350);
-    }
-
-    // Small delay so CSS vars are applied before showing error UI
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', checkToken);
-    } else {
-      checkToken();
-    }
-  })();
+  // ── noads Button: set one-time token ─────────────────
+  document.getElementById('btnGoNoads').addEventListener('click', function () {
+    // Set a one-time session token
+    sessionStorage.setItem('trp_noads_token', '1');
+    window.location.href = '/noads/';
+  });
 </script>
-<script src="/public/app.js"></script>
+<script src="/app.js"></script>
 </body>
 </html>
