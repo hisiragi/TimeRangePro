@@ -649,3 +649,149 @@ body {
 .timer-display, .progress-bar { transition: none; }
 .timer-display { transition: color 0.3s, text-shadow 0.3s; }
 .progress-bar  { transition: width 0.1s linear; }
+
+/* ─── kbd inline (shortcut hint bar) ──────────────── */
+.kbd-inline {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-size: 0.65rem;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-bottom-width: 2px;
+  border-radius: 4px;
+  padding: 1px 5px;
+  color: var(--text-secondary);
+  vertical-align: middle;
+  line-height: 1.5;
+}
+
+/* ─── Keyboard Shortcut Modal ──────────────────────── */
+#shortcutModal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+#shortcutModal.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.sc-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+}
+
+.sc-panel {
+  position: relative;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-3);
+  width: 100%;
+  max-width: 400px;
+  overflow: hidden;
+  transform: scale(0.95) translateY(8px);
+  transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1);
+}
+#shortcutModal.open .sc-panel {
+  transform: scale(1) translateY(0);
+}
+
+.sc-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--divider);
+}
+.sc-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: 0.3px;
+}
+.sc-close { color: var(--text-muted); }
+
+.sc-body {
+  padding: 12px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.sc-group { display: flex; flex-direction: column; gap: 6px; }
+
+.sc-group-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding-bottom: 2px;
+  border-bottom: 1px solid var(--divider);
+  margin-bottom: 2px;
+}
+
+.sc-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.83rem;
+  color: var(--text-secondary);
+}
+
+.sc-row.sc-note {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.sc-row kbd {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-bottom: 2px solid var(--border);
+  border-radius: 5px;
+  padding: 2px 8px;
+  color: var(--text-primary);
+  white-space: nowrap;
+  min-width: 52px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+/* ─── Toast ────────────────────────────────────────── */
+#trpToast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(12px);
+  background: var(--bg-overlay);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  padding: 8px 20px;
+  font-size: 0.82rem;
+  font-family: var(--font-display);
+  white-space: nowrap;
+  box-shadow: var(--shadow-2);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s, transform 0.2s;
+  z-index: 2000;
+}
+#trpToast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
