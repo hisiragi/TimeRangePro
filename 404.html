@@ -3,19 +3,40 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#1a73e8" media="(prefers-color-scheme: dark)">
-  <meta name="theme-color" content="#1a73e8" media="(prefers-color-scheme: light)">
-  <meta name="description" content="開始・終了時刻を指定できる高機能ストップウォッチ">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="TimeRangePro">
-  <link rel="manifest" href="/public/manifest.json">
-  <link rel="stylesheet" href="/public/style.css">
-  <title>404 - Error</title>
-  <!-- Google AdSense -->
-  <script async="" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3265952621594063" crossorigin="anonymous"></script>
+  <meta name="robots" content="noindex">
+  <title>ページが見つかりません（404）｜TimeRangePro</title>
+  <link rel="icon" href="/icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,600;9..40,700&family=Space+Mono:wght@700&display=swap">
+  <link rel="stylesheet" href="/style.css">
+  <script>
+    try {
+      var t = localStorage.getItem('trp_theme') || (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+      document.documentElement.setAttribute('data-theme', t);
+    } catch (e) {}
+  </script>
 </head>
-    <body>
-    <h1>404Error</h1>
-    </body>
+<body>
+  <div class="app-container">
+    <header class="app-header">
+      <a class="app-logo" href="/" aria-label="TimeRangePro ホーム">
+        <svg viewBox="0 0 28 28" fill="none" aria-hidden="true">
+          <circle cx="14" cy="15" r="10" stroke="var(--md-primary)" stroke-width="2"/>
+          <line x1="14" y1="15" x2="14" y2="7" stroke="var(--md-primary)" stroke-width="2" stroke-linecap="round"/>
+          <line x1="14" y1="15" x2="19" y2="17" stroke="var(--md-secondary)" stroke-width="1.5" stroke-linecap="round"/>
+          <rect x="10" y="3" width="8" height="3" rx="1.5" fill="var(--md-primary)"/>
+        </svg>
+        <span class="app-title">TimeRange<span>Pro</span></span>
+      </a>
+    </header>
+    <main class="simple-page">
+      <div class="code" aria-hidden="true">00:04:04</div>
+      <h1>ページが見つかりません</h1>
+      <p>お探しのページは移動または削除された可能性があります。</p>
+      <a class="btn btn-primary" href="/">ストップウォッチを開く</a>
+    </main>
+  </div>
+</body>
 </html>

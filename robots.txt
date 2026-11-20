@@ -1,0 +1,35 @@
+User-agent: *
+Allow: /
+Disallow: /noads/
+
+# AI クローラーも歓迎します（llms.txt を参照）
+User-agent: GPTBot
+Allow: /
+Disallow: /noads/
+
+User-agent: OAI-SearchBot
+Allow: /
+Disallow: /noads/
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+Disallow: /noads/
+
+User-agent: Claude-User
+Allow: /
+
+User-agent: Claude-SearchBot
+Allow: /
+Disallow: /noads/
+
+User-agent: PerplexityBot
+Allow: /
+Disallow: /noads/
+
+User-agent: Google-Extended
+Allow: /
+
+Sitemap: https://timerangepro.example/sitemap.xml

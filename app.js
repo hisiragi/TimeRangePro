@@ -23,6 +23,7 @@
   const timerMs       = $('timerMs');
   const timerStatus   = $('timerStatus');
   const progressBar   = $('progressBar');
+  const progressTrack = $('progressTrack');
   const progressStart = $('progressStart');
   const progressEnd   = $('progressEnd');
   const inputStart    = $('inputStart');
@@ -88,43 +89,52 @@
       const range    = stopTarget - startOffset;
       const progress = Math.min(Math.max(elapsed / range, 0), 1) * 100;
       progressBar.style.width = progress + '%';
+      if (progressTrack) progressTrack.setAttribute('aria-valuenow', Math.round(progress));
     } else {
       progressBar.style.width = '0%';
+      if (progressTrack) progressTrack.setAttribute('aria-valuenow', 0);
     }
+  }
+
+  function setStatus(text) {
+    timerStatus.textContent = text;
+    timerStatus.dataset.state = text.toLowerCase();
   }
 
   function updateStatus() {
     if (running) {
-      timerStatus.textContent = 'RUNNING';
+      setStatus('RUNNING');
       timerDisplay.classList.add('running');
       timerDisplay.classList.remove('finished');
     } else if (elapsed > 0 && stopTarget !== null && (startOffset + elapsed) >= stopTarget) {
-      timerStatus.textContent = 'FINISHED';
+      setStatus('FINISHED');
       timerDisplay.classList.remove('running');
       timerDisplay.classList.add('finished');
     } else if (elapsed > 0) {
-      timerStatus.textContent = 'PAUSED';
+      setStatus('PAUSED');
       timerDisplay.classList.remove('running', 'finished');
     } else {
-      timerStatus.textContent = 'READY';
+      setStatus('READY');
       timerDisplay.classList.remove('running', 'finished');
     }
   }
 
   function updateButtons() {
     if (running) {
-      btnStartStop.textContent = '';
       btnStartStop.innerHTML   = iconPause() + ' Pause';
+      btnStartStop.setAttribute('aria-label', '一時停止');
       btnStartStop.classList.add('running');
       btnStartStop.classList.remove('paused');
       btnLap.disabled = false;
     } else if (elapsed > 0) {
       btnStartStop.innerHTML  = iconPlay() + ' Resume';
+      btnStartStop.setAttribute('aria-label', '再開');
       btnStartStop.classList.add('paused');
       btnStartStop.classList.remove('running');
       btnLap.disabled = false;
     } else {
       btnStartStop.innerHTML  = iconPlay() + ' Start';
+      btnStartStop.setAttribute('aria-label', 'スタート');
       btnStartStop.classList.remove('running', 'paused');
       btnLap.disabled = true;
     }
@@ -234,6 +244,7 @@
 
     const el        = document.createElement('div');
     el.className    = 'lap-item';
+    el.setAttribute('role', 'listitem');
 
     const { main: splitMain, ms: splitMs } = msToDisplay(lap.split);
     const { main: totalMain, ms: totalMs } = msToDisplay(lap.total);
@@ -259,7 +270,11 @@
 
   // ── Theme ────────────────────────────────────────────
   function initTheme() {
-    const saved   = localStorage.getItem('trp_theme') || 'dark';
+    let saved = null;
+    try { saved = localStorage.getItem('trp_theme'); } catch (e) {}
+    if (saved !== 'dark' && saved !== 'light') {
+      saved = (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) ? 'light' : 'dark';
+    }
     document.documentElement.setAttribute('data-theme', saved);
     updateThemeBtn(saved);
   }
@@ -268,7 +283,7 @@
     const current = document.documentElement.getAttribute('data-theme');
     const next    = current === 'dark' ? 'light' : 'dark';
     document.documentElement.setAttribute('data-theme', next);
-    localStorage.setItem('trp_theme', next);
+    try { localStorage.setItem('trp_theme', next); } catch (e) {}
     updateThemeBtn(next);
   }
 
@@ -299,10 +314,10 @@
   }
 
   // ── SVG Icons ────────────────────────────────────────
-  function iconPlay()  { return `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`; }
-  function iconPause() { return `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`; }
-  function iconSun()   { return `<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 7a5 5 0 1 0 0 10A5 5 0 0 0 12 7zm0-5a1 1 0 0 1 1 1v2a1 1 0 0 1-2 0V3a1 1 0 0 1 1-1zm0 16a1 1 0 0 1 1 1v2a1 1 0 0 1-2 0v-2a1 1 0 0 1 1-1zM4.22 5.64a1 1 0 1 1 1.42-1.42l1.41 1.42a1 1 0 0 1-1.41 1.41L4.22 5.64zM17.36 18.78a1 1 0 1 1 1.42-1.42l1.41 1.42a1 1 0 0 1-1.41 1.41l-1.42-1.41zM3 13H1a1 1 0 0 1 0-2h2a1 1 0 0 1 0 2zm20 0h-2a1 1 0 0 1 0-2h2a1 1 0 0 1 0 2zM4.22 18.36l-1.42 1.42a1 1 0 1 1-1.41-1.42l1.41-1.41a1 1 0 0 1 1.42 1.41zM19.78 5.64l-1.42 1.41a1 1 0 0 1-1.41-1.41l1.41-1.42a1 1 0 1 1 1.42 1.42z"/></svg>`; }
-  function iconMoon()  { return `<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M21.64 13a1 1 0 0 0-1.05-.14 8.05 8.05 0 0 1-3.37.73 8.15 8.15 0 0 1-8.14-8.1 8.59 8.59 0 0 1 .25-2A1 1 0 0 0 8 2.36a10.14 10.14 0 1 0 14 11 1 1 0 0 0-.36-.96z"/></svg>`; }
+  function iconPlay()  { return `<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`; }
+  function iconPause() { return `<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`; }
+  function iconSun()   { return `<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 7a5 5 0 1 0 0 10A5 5 0 0 0 12 7zm0-5a1 1 0 0 1 1 1v2a1 1 0 0 1-2 0V3a1 1 0 0 1 1-1zm0 16a1 1 0 0 1 1 1v2a1 1 0 0 1-2 0v-2a1 1 0 0 1 1-1zM4.22 5.64a1 1 0 1 1 1.42-1.42l1.41 1.42a1 1 0 0 1-1.41 1.41L4.22 5.64zM17.36 18.78a1 1 0 1 1 1.42-1.42l1.41 1.42a1 1 0 0 1-1.41 1.41l-1.42-1.41zM3 13H1a1 1 0 0 1 0-2h2a1 1 0 0 1 0 2zm20 0h-2a1 1 0 0 1 0-2h2a1 1 0 0 1 0 2zM4.22 18.36l-1.42 1.42a1 1 0 1 1-1.41-1.42l1.41-1.41a1 1 0 0 1 1.42 1.41zM19.78 5.64l-1.42 1.41a1 1 0 0 1-1.41-1.41l1.41-1.42a1 1 0 1 1 1.42 1.42z"/></svg>`; }
+  function iconMoon()  { return `<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M21.64 13a1 1 0 0 0-1.05-.14 8.05 8.05 0 0 1-3.37.73 8.15 8.15 0 0 1-8.14-8.1 8.59 8.59 0 0 1 .25-2A1 1 0 0 0 8 2.36a10.14 10.14 0 1 0 14 11 1 1 0 0 0-.36-.96z"/></svg>`; }
 
   // ── Shortcut Modal ───────────────────────────────────
   function buildShortcutModal() {
@@ -310,6 +325,7 @@
     const modal = document.createElement('div');
     modal.id = 'shortcutModal';
     modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
     modal.setAttribute('aria-label', 'キーボードショートカット');
     modal.innerHTML = `
       <div class="sc-backdrop"></div>
@@ -350,8 +366,11 @@
 
   function openShortcutModal()  {
     buildShortcutModal();
-    $('shortcutModal').classList.add('open');
+    const m = $('shortcutModal');
+    m.classList.add('open');
     document.body.style.overflow = 'hidden';
+    const close = m.querySelector('.sc-close');
+    if (close) close.focus();
   }
   function closeShortcutModal() {
     const m = $('shortcutModal');
@@ -439,15 +458,15 @@
       deferredPrompt = e;
       const el = $('installPrompt');
       if (el) {
-        el.style.display = 'flex';
+        el.hidden = false;
         el.querySelector('.btn-install').addEventListener('click', async () => {
           deferredPrompt.prompt();
           const { outcome } = await deferredPrompt.userChoice;
-          el.style.display = 'none';
+          el.hidden = true;
           deferredPrompt = null;
         });
         el.querySelector('.btn-install-dismiss').addEventListener('click', () => {
-          el.style.display = 'none';
+          el.hidden = true;
         });
       }
     });

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'timerangepro-v1';
+const CACHE_NAME = 'timerangepro-v2';
 const NOADS_TOKEN_KEY = 'trp_noads_token';
 
 // Core assets always cached on install
@@ -7,7 +7,11 @@ const PRECACHE_URLS = [
   '/index.html',
   '/style.css',
   '/app.js',
-  '/manifest.json'
+  '/manifest.json',
+  '/icons/icon.svg',
+  '/icons/icon-192.png',
+  '/apple-touch-icon.png',
+  '/favicon-48.png'
 ];
 
 // noads page is cached only after first successful access
@@ -36,6 +40,22 @@ self.addEventListener('fetch', event => {
 
   if (isNoads) {
     event.respondWith(handleNoads(event.request));
+    return;
+  }
+
+  if (event.request.method !== 'GET') return;
+
+  // Pages: network-first so content updates reach users quickly
+  if (event.request.mode === 'navigate' && url.origin === self.location.origin) {
+    event.respondWith(
+      fetch(event.request).then(response => {
+        if (response && response.status === 200) {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+        }
+        return response;
+      }).catch(() => caches.match(event.request).then(r => r || caches.match('/index.html')))
+    );
     return;
   }
 

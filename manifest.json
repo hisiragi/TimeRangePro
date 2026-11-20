@@ -1,31 +1,30 @@
 {
-  "name": "TimeRangePro",
+  "name": "TimeRangePro — 開始・終了時刻を指定できるストップウォッチ",
   "short_name": "TimeRangePro",
-  "description": "Stopwatch with start/stop time range for video editing",
+  "description": "開始時刻と終了時刻を指定して計測できるストップウォッチ。動画編集・配信・収録向け。",
+  "id": "/",
   "start_url": "/",
+  "scope": "/",
+  "lang": "ja",
+  "dir": "ltr",
   "display": "standalone",
-  "background_color": "#0f0f0f",
-  "theme_color": "#1a73e8",
+  "background_color": "#0b0f15",
+  "theme_color": "#0b0f15",
   "orientation": "any",
+  "categories": ["utilities", "productivity", "video"],
   "icons": [
-    {
-      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='40' fill='%231a73e8'/%3E%3Ccircle cx='96' cy='100' r='58' fill='none' stroke='%23fff' stroke-width='8'/%3E%3Cline x1='96' y1='100' x2='96' y2='58' stroke='%23fff' stroke-width='6' stroke-linecap='round'/%3E%3Cline x1='96' y1='100' x2='126' y2='110' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3Crect x='76' y='34' width='40' height='10' rx='5' fill='%23fff'/%3E%3C/svg%3E",
-      "sizes": "192x192",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%231a73e8'/%3E%3Ccircle cx='256' cy='270' r='155' fill='none' stroke='%23fff' stroke-width='20'/%3E%3Cline x1='256' y1='270' x2='256' y2='148' stroke='%23fff' stroke-width='16' stroke-linecap='round'/%3E%3Cline x1='256' y1='270' x2='336' y2='296' stroke='%23fff' stroke-width='12' stroke-linecap='round'/%3E%3Crect x='200' y='88' width='112' height='28' rx='14' fill='%23fff'/%3E%3C/svg%3E",
-      "sizes": "512x512",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
-    }
+    { "src": "/icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ],
   "shortcuts": [
     {
-      "name": "Ad-free",
+      "name": "広告なし版",
+      "short_name": "広告なし",
       "url": "/noads/",
-      "description": "Open ad-free version"
+      "description": "広告なし版を開く",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" }]
     }
   ]
 }
